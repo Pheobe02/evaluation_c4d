@@ -50,8 +50,6 @@ body{min-width:1180px;}
 .screen{display:none;flex:1;min-height:0;}
 .screen.active{display:flex;flex-direction:column;}
 .page-scroll{flex:1;overflow:auto;padding:22px 24px 20px;}
-.page-head{margin-bottom:14px;}
-.page-head h1{font-size:22px;line-height:1.2;font-weight:700;}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;}
 .search-bar{width:320px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:0 12px;height:38px;box-shadow:var(--shadow-sm);}
 .search-bar.wide{width:min(560px,52%);}
@@ -76,16 +74,53 @@ body{min-width:1180px;}
 .table tbody tr:hover td{background:var(--bg-hover);}
 .table tbody tr:last-child td{border-bottom:none;}
 .table tbody tr.selected td{background:var(--bg-selected);}
-.table .sticky-right{position:sticky;right:0;z-index:2;background:inherit;box-shadow:-12px 0 16px -16px rgba(15,23,42,.24);}
+.table .sticky-first{position:sticky;left:0;z-index:4;background:#fff;}
+.table .sticky-left-1,.table .sticky-left-2,.table .sticky-right{position:sticky;z-index:4;}
+.table .sticky-left-1,.table .sticky-left-2{background:#fff;}
+.table .sticky-left-1{left:0;}
+.table .sticky-left-2{left:96px;}
+.table .sticky-left-2::after{
+  content:'';
+  position:absolute;
+  top:-1px;
+  right:-18px;
+  width:18px;
+  height:calc(100% + 2px);
+  background:linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,.92) 45%, rgba(255,255,255,0) 100%);
+  pointer-events:none;
+}
+.table thead .sticky-first,
+.table thead .sticky-left-1,.table thead .sticky-left-2,.table thead .sticky-right{z-index:5;background:#fbfcff;}
+.table thead .sticky-left-2::after{
+  background:linear-gradient(90deg, rgba(251,252,255,1) 0%, rgba(251,252,255,.92) 45%, rgba(251,252,255,0) 100%);
+}
+.table .sticky-right{right:0;z-index:4;background:#fff;box-shadow:-12px 0 16px -16px rgba(15,23,42,.24);}
+.table tbody tr:hover .sticky-first,
+.table tbody tr:hover .sticky-left-1,
+.table tbody tr:hover .sticky-left-2,
+.table tbody tr:hover .sticky-right{background:var(--bg-hover);}
+.table tbody tr:hover .sticky-left-2::after{
+  background:linear-gradient(90deg, rgba(246,248,253,1) 0%, rgba(246,248,253,.92) 45%, rgba(246,248,253,0) 100%);
+}
+.table tbody tr.selected .sticky-first,
+.table tbody tr.selected .sticky-left-1,
+.table tbody tr.selected .sticky-left-2,
+.table tbody tr.selected .sticky-right{background:var(--bg-selected);}
+.table tbody tr.selected .sticky-left-2::after{
+  background:linear-gradient(90deg, rgba(238,244,255,1) 0%, rgba(238,244,255,.92) 45%, rgba(238,244,255,0) 100%);
+}
 .td-ellipsis{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .td-ellipsis.wide{max-width:280px;}
 .link{color:var(--brand-strong);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.text-strong{color:var(--text-1);font-weight:500;}
+.action-row{display:flex;align-items:center;gap:14px;}
+.action-link{color:var(--brand-strong);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.action-link.danger{color:var(--red);}
 .mono{font-family:var(--mono);font-size:12px;color:var(--text-1);}
 .tag{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;border:1px solid transparent;font-size:11px;font-weight:600;white-space:nowrap;}
 .tag-env-prod{background:var(--green-soft);border-color:var(--green-line);color:var(--green);}
 .tag-env-uat{background:var(--orange-soft);border-color:var(--orange-line);color:var(--orange);}
 .tag-type-session{background:var(--purple-soft);border-color:var(--purple-line);color:var(--purple);}
-.tag-type-case{background:var(--red-soft);border-color:var(--red-line);color:var(--orange);}
 .tag-type-trace{background:var(--teal-soft);border-color:var(--teal-line);color:var(--teal);}
 .pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 4px 0;}
 .pagination-info{color:var(--text-3);font-size:12px;}
@@ -98,15 +133,15 @@ body{min-width:1180px;}
 .summary-label{color:var(--text-3);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
 .summary-value{color:var(--text-1);font-weight:600;}
 .drawer-layout{position:relative;display:flex;min-height:0;flex:1;}
-.drawer-main{flex:1;min-width:0;transition:padding-right .18s ease;}
-.drawer-main.with-drawer{padding-right:376px;}
-.side-drawer{position:absolute;top:0;right:0;bottom:0;width:360px;background:#fff;border-left:1px solid var(--border);box-shadow:-16px 0 32px rgba(15,23,42,.08);display:none;flex-direction:column;}
+.drawer-main{flex:1;min-width:0;transition:width .2s ease,margin-right .2s ease;position:relative;z-index:1;}
+.drawer-main.with-drawer{width:calc(100% - 520px);margin-right:520px;}
+.side-drawer{position:absolute;top:0;right:0;bottom:0;width:500px;background:#fff;border-left:1px solid var(--border);box-shadow:-24px 0 48px rgba(15,23,42,.14),-2px 0 8px rgba(15,23,42,.06);display:none;flex-direction:column;z-index:8;}
 .side-drawer.open{display:flex;}
-.drawer-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.drawer-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:#fff;position:relative;z-index:1;}
 .drawer-title{min-width:0;flex:1;display:flex;align-items:center;gap:10px;}
-.drawer-title-text{min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.drawer-title-text{min-width:0;font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .drawer-nav{display:flex;align-items:center;gap:6px;}
-.drawer-body{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:14px;}
+.drawer-body{padding:18px 20px 24px;overflow:auto;display:flex;flex-direction:column;gap:16px;background:#fff;}
 .field-group{padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}
 .field-group:last-child{border-bottom:none;padding-bottom:0;}
 .field-row{display:flex;flex-direction:column;gap:4px;}
@@ -141,17 +176,20 @@ body{min-width:1180px;}
 .import-card{border:1px dashed var(--border-strong);background:var(--bg-subtle);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;}
 .import-drop{height:88px;border:1px dashed var(--border-strong);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;cursor:pointer;color:var(--text-2);}
 .import-drop:hover{border-color:var(--brand-line);color:var(--brand-strong);background:var(--brand-soft);}
+.import-drop.hidden{display:none;}
 .import-state{display:none;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--border);}
 .import-state.show{display:flex;}
 .import-meta{display:flex;align-items:center;gap:8px;min-width:0;}
 .import-file{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}
 .import-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;}
+.import-grid .btn{background:linear-gradient(135deg,#4f8dfd,#2f6ff2);border-color:#2f6ff2;color:#fff;box-shadow:0 10px 24px rgba(47,111,242,.18);}
+.import-grid .btn:hover:not(:disabled){background:linear-gradient(135deg,#3b82f6,#1f5fe0);border-color:#1f5fe0;}
 .tabs{display:flex;gap:6px;padding:6px;border-radius:12px;background:var(--bg-soft);border:1px solid var(--border);}
 .tab{flex:1;height:34px;border:none;background:transparent;border-radius:8px;color:var(--text-2);cursor:pointer;font-weight:600;}
 .tab.active{background:#fff;color:var(--brand-strong);box-shadow:var(--shadow-sm);}
 .tab-panel{display:none;min-height:0;}
 .tab-panel.active{display:block;}
-.trace-tab-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:14px;min-height:242px;}
+.trace-tab-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:14px;min-height:330px;}
 .panel{border:1px solid var(--border);border-radius:12px;background:#fff;display:flex;flex-direction:column;min-height:0;}
 .panel-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fcfdff;}
 .panel-title{font-weight:700;}
@@ -163,18 +201,22 @@ body{min-width:1180px;}
 .mini-table td{font-size:12px;color:var(--text-2);}
 .mini-table tbody tr:hover td{background:var(--bg-hover);}
 .mini-table tbody tr:last-child td{border-bottom:none;}
+.mini-table .sticky-first{position:sticky;left:0;z-index:3;background:#fff;}
+.mini-table thead .sticky-first{z-index:4;background:#fbfcff;}
+.mini-table tbody tr:hover .sticky-first{background:var(--bg-hover);}
 .mini-scroll{overflow:auto;min-height:0;flex:1;}
 .checkbox{width:14px;height:14px;accent-color:var(--brand);cursor:pointer;}
-.selection-box{height:120px;overflow:auto;border:1px solid var(--border);border-radius:12px;background:#fff;display:flex;flex-direction:column;}
+.selection-box{height:156px;overflow:auto;border:1px solid var(--border);border-radius:12px;background:#fff;display:flex;flex-direction:column;}
 .selection-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) 24px;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);}
 .selection-row:last-child{border-bottom:none;}
+.selection-row > div{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .selection-empty{padding:24px 12px;text-align:center;color:var(--text-3);}
 .inline-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .hidden{display:none !important;}
 @media (max-width: 1320px){
   .trace-tab-layout{grid-template-columns:1fr;}
-  .drawer-main.with-drawer{padding-right:0;}
-  .side-drawer{width:340px;}
+  .drawer-main.with-drawer{width:auto;margin-right:0;}
+  .side-drawer{width:420px;}
 }
 </style>
 </head>
@@ -205,7 +247,6 @@ body{min-width:1180px;}
     <div class="screen active" id="screen-list">
       <div class="topbar"><span class="page-title">数据集</span></div>
       <div class="page-scroll">
-        <div class="page-head"><h1>数据集</h1></div>
         <div class="toolbar">
           <div class="search-bar">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -218,7 +259,6 @@ body{min-width:1180px;}
             </button>
             <div class="dropdown" id="create-menu">
               <div class="dropdown-item" data-create="session">按 session 创建</div>
-              <div class="dropdown-item" data-create="case">按 case 创建</div>
               <div class="dropdown-item" data-create="trace">按 trace 创建</div>
             </div>
           </div>
@@ -228,14 +268,14 @@ body{min-width:1180px;}
           <table class="table" id="dataset-table">
             <thead>
               <tr>
-                <th style="width:96px;">ID</th>
-                <th style="width:220px;">数据集名称</th>
+                <th class="sticky-left-1" style="width:96px;">ID</th>
+                <th class="sticky-left-2" style="width:220px;">数据集名称</th>
                 <th style="width:110px;">环境</th>
                 <th style="width:120px;">创建类型</th>
                 <th style="width:120px;">总数 (S/T)</th>
                 <th style="width:320px;">描述</th>
                 <th style="width:180px;">创建时间</th>
-                <th class="sticky-right" style="width:92px;">操作</th>
+                <th class="sticky-right" style="width:124px;">操作</th>
               </tr>
             </thead>
             <tbody id="dataset-tbody"></tbody>
@@ -270,7 +310,7 @@ body{min-width:1180px;}
             <table class="table" style="min-width:1180px;">
               <thead>
                 <tr>
-                  <th style="width:88px;">ID</th>
+                  <th class="sticky-first" style="width:88px;">ID</th>
                   <th style="width:210px;">session id</th>
                   <th style="width:220px;">trace id</th>
                   <th style="width:280px;">用户输入</th>
@@ -304,7 +344,7 @@ body{min-width:1180px;}
 </div>
 
 <div class="overlay" id="modal-basic-overlay">
-  <div class="modal" style="width:720px;height:620px;">
+  <div class="modal" style="width:720px;height:700px;">
     <div class="modal-header">
       <div>
         <div class="modal-title" id="basic-modal-title">按 session 创建</div>
@@ -327,7 +367,7 @@ body{min-width:1180px;}
         </div>
       </div>
       <div class="field">
-        <label class="label req" id="basic-id-label">Session ID / Case ID</label>
+        <label class="label req" id="basic-id-label">Session ID</label>
         <textarea class="textarea fixed" id="basic-ids" placeholder="支持换行或逗号分隔"></textarea>
         <div class="helper" id="basic-id-helper">支持手动批量输入，实时按换行或逗号拆分。</div>
       </div>
@@ -352,7 +392,7 @@ body{min-width:1180px;}
             <label class="label">字段列</label>
             <select class="select" id="basic-column"></select>
           </div>
-          <button class="btn" id="basic-sync">同步到输入框</button>
+          <button class="btn" id="basic-sync">同步导入session</button>
         </div>
       </div>
       <div class="field">
@@ -371,7 +411,7 @@ body{min-width:1180px;}
 </div>
 
 <div class="overlay" id="modal-trace-overlay">
-  <div class="modal" style="width:700px;height:520px;">
+  <div class="modal" style="width:760px;height:700px;">
     <div class="modal-header">
       <div>
         <div class="modal-title">按 trace 创建</div>
@@ -457,7 +497,7 @@ body{min-width:1180px;}
                 <table class="mini-table">
                   <thead>
                     <tr>
-                      <th style="width:42px;"></th>
+                      <th class="sticky-first" style="width:42px;"></th>
                       <th style="width:160px;">trace id</th>
                       <th>用户输入</th>
                       <th style="width:150px;">创建时间</th>
@@ -501,9 +541,9 @@ const datasets = [
     traces:buildTraceRows('sess-uat-','trace-uat-',15,'请帮我查一下物流状态','物流信息已同步到最新节点。')
   },
   {
-    id:'ds_10764',name:'case_refund_hotfix',env:'prod',type:'case',session_count:18,trace_count:52,
-    desc:'退款咨询 case 集合，覆盖金额核对、到账时效、补充资料等场景。',created_at:'2026-05-17 19:42',
-    traces:buildTraceRows('sess-case-','trace-case-',14,'退款多久到账','退款将在 1-3 个工作日内原路退回。')
+    id:'ds_10764',name:'prod_refund_session_hotfix',env:'prod',type:'session',session_count:18,trace_count:52,
+    desc:'退款咨询 session 集合，覆盖金额核对、到账时效、补充资料等场景。',created_at:'2026-05-17 19:42',
+    traces:buildTraceRows('sess-refund-','trace-refund-',14,'退款多久到账','退款将在 1-3 个工作日内原路退回。')
   },
   {
     id:'ds_10688',name:'prod_vip_trace_group',env:'prod',type:'trace',session_count:0,trace_count:24,
@@ -511,8 +551,8 @@ const datasets = [
     traces:buildTraceRows('sess-vip-','trace-vip-',11,'会员有什么权益','当前会员支持专属折扣与极速服务。')
   },
   {
-    id:'ds_10614',name:'uat_onboarding_case_pack',env:'uat',type:'case',session_count:22,trace_count:61,
-    desc:'新手引导 case 数据集，验证功能说明、操作步骤与异常引导文案。',created_at:'2026-05-11 16:05',
+    id:'ds_10614',name:'uat_onboarding_session_pack',env:'uat',type:'session',session_count:22,trace_count:61,
+    desc:'新手引导 session 数据集，验证功能说明、操作步骤与异常引导文案。',created_at:'2026-05-11 16:05',
     traces:buildTraceRows('sess-new-','trace-new-',16,'怎么开始使用','建议先完成账号绑定，再进入任务面板。')
   }
 ];
@@ -531,7 +571,7 @@ const createState = {
   selectedTraceIds:new Set()
 };
 const importSheets = {
-  Sheet1:['session_id','trace_id','case_id'],
+  Sheet1:['session_id','trace_id'],
   SessionMap:['session_code','trace_ref'],
   TracePool:['trace_id','input']
 };
@@ -556,8 +596,8 @@ function buildTraceRows(sessionPrefix,tracePrefix,count,inputSeed,outputSeed){
 }
 function envLabel(env){ return env === 'prod' ? '线上' : 'UAT'; }
 function envClass(env){ return env === 'prod' ? 'tag-env-prod' : 'tag-env-uat'; }
-function typeClass(type){ return ({session:'tag-type-session',case:'tag-type-case',trace:'tag-type-trace'})[type]; }
-function typeLabel(type){ return ({session:'session',case:'case',trace:'trace'})[type]; }
+function typeClass(type){ return ({session:'tag-type-session',trace:'tag-type-trace'})[type]; }
+function typeLabel(type){ return ({session:'session',trace:'trace'})[type]; }
 function countLabel(ds){ return ds.type === 'trace' ? `— / ${ds.trace_count}` : `${ds.session_count} / ${ds.trace_count}`; }
 function escapeHtml(v){ return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function parseBulkInput(value){ return value.split(/[\n,]/).map(v=>v.trim()).filter(Boolean); }
@@ -575,15 +615,20 @@ function renderDatasetTable(){
   const pageRows = rows.slice(start, start + datasetPageSize);
   const tbody = document.getElementById('dataset-tbody');
   tbody.innerHTML = pageRows.length ? pageRows.map(ds => `
-    <tr>
-      <td class="mono" title="${ds.id}">${ds.id}</td>
-      <td><span class="link td-ellipsis" title="${escapeHtml(ds.name)}" onclick="openDatasetDetail('${ds.id}')">${escapeHtml(ds.name)}</span></td>
-      <td><span class="tag ${envClass(ds.env)}">${envLabel(ds.env)}</span></td>
-      <td><span class="tag ${typeClass(ds.type)}">${typeLabel(ds.type)}</span></td>
+    <tr onclick="openDatasetDetail('${ds.id}')">
+      <td class="mono sticky-left-1" title="${ds.id}">${ds.id}</td>
+      <td class="sticky-left-2 td-ellipsis text-strong" title="${escapeHtml(ds.name)}">${escapeHtml(ds.name)}</td>
+      <td title="${envLabel(ds.env)}"><span class="tag ${envClass(ds.env)}">${envLabel(ds.env)}</span></td>
+      <td title="${typeLabel(ds.type)}"><span class="tag ${typeClass(ds.type)}">${typeLabel(ds.type)}</span></td>
       <td class="td-nowrap" title="${countLabel(ds)}">${countLabel(ds)}</td>
       <td class="td-ellipsis wide" title="${escapeHtml(ds.desc || '—')}">${escapeHtml(ds.desc || '—')}</td>
       <td class="td-nowrap" title="${ds.created_at}">${ds.created_at}</td>
-      <td class="sticky-right"><span class="link" onclick="openDatasetDetail('${ds.id}')">详情</span></td>
+      <td class="sticky-right" onclick="event.stopPropagation()">
+        <div class="action-row">
+          <span class="action-link" onclick="openDatasetDetail('${ds.id}')">详情</span>
+          <span class="action-link danger" onclick="deleteDataset('${ds.id}')">删除</span>
+        </div>
+      </td>
     </tr>
   `).join('') : `<tr><td colspan="8" style="text-align:center;color:var(--text-3);padding:28px 14px;">暂无匹配数据集</td></tr>`;
   const end = Math.min(start + pageRows.length, total);
@@ -596,6 +641,16 @@ function renderDatasetTable(){
   `;
 }
 function changeDatasetPage(page){ currentDatasetPage = page; renderDatasetTable(); }
+function deleteDataset(id){
+  const index = datasets.findIndex(ds => ds.id === id);
+  if(index === -1) return;
+  datasets.splice(index, 1);
+  if(currentDatasetId === id){
+    currentDatasetId = datasets[0] ? datasets[0].id : '';
+    backToList();
+  }
+  renderDatasetTable();
+}
 function openDatasetDetail(id){
   currentDatasetId = id;
   currentTracePage = 1;
@@ -640,7 +695,7 @@ function renderTraceTable(){
     const selected = selectedTraceIndex === globalIndex ? 'selected' : '';
     return `
       <tr class="${selected}" onclick="openTraceDrawer(${globalIndex})">
-        <td title="${row.id}">${row.id}</td>
+        <td class="sticky-first" title="${row.id}">${row.id}</td>
         <td class="mono td-ellipsis" title="${escapeHtml(row.session_id)}">${escapeHtml(row.session_id)}</td>
         <td class="mono td-ellipsis" title="${escapeHtml(row.trace_id)}">${escapeHtml(row.trace_id)}</td>
         <td class="td-ellipsis wide" title="${escapeHtml(row.input)}">${escapeHtml(row.input)}</td>
@@ -704,10 +759,9 @@ function openOverlay(id){ document.getElementById(id).classList.add('open'); }
 function closeOverlay(id){ document.getElementById(id).classList.remove('open'); }
 function resetBasicModal(type){
   createState.basicType = type;
-  const isSession = type === 'session';
   document.getElementById('basic-modal-title').textContent = `按 ${type} 创建`;
-  document.getElementById('basic-modal-subtitle').textContent = `支持手动批量输入或从文件导入 ${isSession ? 'session id' : 'case id'}。`;
-  document.getElementById('basic-id-label').textContent = isSession ? 'Session ID' : 'Case ID';
+  document.getElementById('basic-modal-subtitle').textContent = '支持手动批量输入或从文件导入 session id。';
+  document.getElementById('basic-id-label').textContent = 'Session ID';
   document.getElementById('basic-name').value = '';
   document.getElementById('basic-env').value = 'prod';
   document.getElementById('basic-ids').value = '';
@@ -720,16 +774,20 @@ function syncBasicFooter(){
   document.getElementById('basic-footer-meta').textContent = `已识别 ${count} 条`;
 }
 function resetImportCard(prefix){
+  const trigger = document.getElementById(`${prefix}-upload-trigger`);
+  if(trigger) trigger.classList.remove('hidden');
   document.getElementById(`${prefix}-import-state`).classList.remove('show');
   document.getElementById(`${prefix}-import-controls`).classList.add('hidden');
 }
 function openBasicImport(){
+  document.getElementById('basic-upload-trigger').classList.add('hidden');
   document.getElementById('basic-import-state').classList.add('show');
   document.getElementById('basic-import-controls').classList.remove('hidden');
   populateImportSelect('basic-sheet', Object.keys(importSheets));
   syncImportColumns('basic-sheet','basic-column');
 }
 function openTraceImport(){
+  document.getElementById('trace-upload-trigger').classList.add('hidden');
   document.getElementById('trace-import-state').classList.add('show');
   document.getElementById('trace-import-controls').classList.remove('hidden');
   populateImportSelect('trace-sheet', Object.keys(importSheets));
@@ -745,8 +803,7 @@ function syncImportColumns(sheetId, columnId){
   populateImportSelect(columnId, columns);
 }
 function syncBasicImportToInput(){
-  const column = document.getElementById('basic-column').value;
-  const values = column.includes('case') ? ['case_001','case_002','case_003'] : ['sess_1001','sess_1002','sess_1003'];
+  const values = ['sess_1001','sess_1002','sess_1003'];
   document.getElementById('basic-ids').value = values.join('\n');
   syncBasicFooter();
 }
@@ -765,7 +822,7 @@ function submitBasicDataset(){
     id:`ds_${10800 + datasets.length + Math.floor(Math.random() * 80)}`,
     name, env, type,
     session_count: ids.length,
-    trace_count: type === 'case' ? ids.length * 3 : ids.length * 2,
+    trace_count: ids.length * 2,
     desc: desc || `${type} 批量导入，共 ${ids.length} 条。`,
     created_at:'2026-05-21 12:08',
     traces:buildTraceRows(`${type}-sess-`,`${type}-trace-`,Math.max(ids.length * 2, 8),`${type} 输入样本`,`模型输出样本`)
@@ -811,7 +868,7 @@ function renderSessionPreview(){
     const checked = createState.selectedTraceIds.has(row.trace_id) ? 'checked' : '';
     return `
       <tr>
-        <td><input class="checkbox" type="checkbox" ${checked} onchange="togglePreviewSelection('${row.trace_id}')" /></td>
+        <td class="sticky-first" title="${checked ? '已选中' : '未选中'}"><input class="checkbox" type="checkbox" ${checked} onchange="togglePreviewSelection('${row.trace_id}')" /></td>
         <td class="mono td-ellipsis" title="${escapeHtml(row.trace_id)}">${escapeHtml(row.trace_id)}</td>
         <td class="td-ellipsis" title="${escapeHtml(row.input)}">${escapeHtml(row.input)}</td>
         <td title="${row.created_at}">${row.created_at}</td>
@@ -972,6 +1029,7 @@ function init(){
   }));
 }
 window.changeDatasetPage = changeDatasetPage;
+window.deleteDataset = deleteDataset;
 window.openDatasetDetail = openDatasetDetail;
 window.changeTracePage = changeTracePage;
 window.openTraceDrawer = openTraceDrawer;
