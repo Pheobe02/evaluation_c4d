@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chat4Data · 数据集</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg-page:#f5f7fb;--bg-card:#fff;--bg-subtle:#fafbff;--bg-soft:#f2f4fa;--bg-hover:#f6f8fd;--bg-selected:#eef4ff;
+  --border:#e6eaf2;--border-strong:#d7ddea;--shadow-sm:0 1px 2px rgba(33,43,68,.04),0 6px 18px rgba(33,43,68,.04);
+  --shadow-md:0 14px 32px rgba(15,23,42,.10),0 2px 8px rgba(15,23,42,.06);
+  --text-1:#1f2937;--text-2:#556070;--text-3:#8b95a7;--mono:'SF Mono','Fira Code','Cascadia Code',Consolas,monospace;
+  --brand:#3b82f6;--brand-strong:#2563eb;--brand-soft:#eaf2ff;--brand-line:#c7dbff;
+  --green:#16a34a;--green-soft:#edfdf3;--green-line:#b7efca;
+  --orange:#ea580c;--orange-soft:#fff4eb;--orange-line:#ffd0b0;
+  --purple:#7c3aed;--purple-soft:#f3ebff;--purple-line:#dcc6ff;
+  --red:#dc2626;--red-soft:#fff1f1;--red-line:#ffcaca;
+  --teal:#059669;--teal-soft:#ecfdf5;--teal-line:#b8efd7;
+  --radius:10px;--radius-sm:8px;--sidebar:208px;--topbar:56px;
+  --font:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg-page);font:13px/1.45 var(--font);color:var(--text-1);-webkit-font-smoothing:antialiased;}
+button,input,textarea,select{font:inherit;}
+body{min-width:1180px;}
+.app{display:flex;height:100vh;}
+.sidebar{width:var(--sidebar);flex:none;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;box-shadow:var(--shadow-sm);z-index:4;}
+.sb-logo{padding:16px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.logo-icon{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#3b82f6,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;}
+.logo-text{font-weight:700;font-size:14px;}
+.logo-sub{font-size:10px;color:var(--text-3);margin-top:2px;}
+.sb-section{padding:14px 10px 4px;}
+.sb-label{padding:0 8px;margin-bottom:4px;color:var(--text-3);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:var(--text-2);cursor:pointer;transition:.15s;margin-bottom:2px;user-select:none;}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-1);}
+.nav-item.active{background:var(--brand-soft);color:var(--brand-strong);font-weight:600;}
+.nav-item svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+.sb-bottom{margin-top:auto;padding:10px;border-top:1px solid var(--border);}
+.user-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;}
+.user-row:hover{background:var(--bg-hover);}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:var(--topbar);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;flex:none;}
+.page-title{font-size:18px;font-weight:700;letter-spacing:.01em;}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2);}
+.bc-link{cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+.bc-link:hover{color:var(--brand-strong);}
+.bc-current{color:var(--text-1);font-weight:600;}
+.bc-sep{color:#c0c7d4;}
+.screen{display:none;flex:1;min-height:0;}
+.screen.active{display:flex;flex-direction:column;}
+.page-scroll{flex:1;overflow:auto;padding:22px 24px 20px;}
+.page-head{margin-bottom:14px;}
+.page-head h1{font-size:22px;line-height:1.2;font-weight:700;}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;}
+.search-bar{width:320px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:0 12px;height:38px;box-shadow:var(--shadow-sm);}
+.search-bar.wide{width:min(560px,52%);}
+.search-bar:focus-within{border-color:var(--brand-line);box-shadow:0 0 0 3px rgba(59,130,246,.08);}
+.search-bar svg{width:14px;height:14px;stroke:var(--text-3);fill:none;stroke-width:2;flex:none;}
+.search-bar input{border:none;outline:none;background:transparent;flex:1;color:var(--text-1);min-width:0;}
+.search-bar input::placeholder,textarea::placeholder{color:var(--text-3);}
+.btn{height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--border-strong);background:#fff;color:var(--text-1);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.15s;box-shadow:var(--shadow-sm);white-space:nowrap;}
+.btn:hover:not(:disabled){background:var(--bg-hover);}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 10px 24px rgba(59,130,246,.16);}
+.btn-primary:hover:not(:disabled){background:var(--brand-strong);border-color:var(--brand-strong);}
+.btn-subtle{background:var(--bg-subtle);}
+.btn-danger{color:var(--red);}
+.btn-sm{height:30px;padding:0 10px;border-radius:8px;font-size:12px;}
+.btn-icon{width:30px;padding:0;justify-content:center;}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-sm);}
+.table-shell{overflow:auto;border-radius:14px;background:#fff;}
+.table{width:100%;border-collapse:separate;border-spacing:0;min-width:1380px;}
+.table th{position:sticky;top:0;z-index:1;background:#fbfcff;padding:12px 14px;border-bottom:1px solid var(--border);text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);white-space:nowrap;}
+.table td{padding:12px 14px;border-bottom:1px solid var(--border);background:#fff;color:var(--text-2);vertical-align:middle;white-space:nowrap;}
+.table tbody tr:hover td{background:var(--bg-hover);}
+.table tbody tr:last-child td{border-bottom:none;}
+.table tbody tr.selected td{background:var(--bg-selected);}
+.table .sticky-right{position:sticky;right:0;z-index:2;background:inherit;box-shadow:-12px 0 16px -16px rgba(15,23,42,.24);}
+.td-ellipsis{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.td-ellipsis.wide{max-width:280px;}
+.link{color:var(--brand-strong);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.mono{font-family:var(--mono);font-size:12px;color:var(--text-1);}
+.tag{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;border:1px solid transparent;font-size:11px;font-weight:600;white-space:nowrap;}
+.tag-env-prod{background:var(--green-soft);border-color:var(--green-line);color:var(--green);}
+.tag-env-uat{background:var(--orange-soft);border-color:var(--orange-line);color:var(--orange);}
+.tag-type-session{background:var(--purple-soft);border-color:var(--purple-line);color:var(--purple);}
+.tag-type-case{background:var(--red-soft);border-color:var(--red-line);color:var(--orange);}
+.tag-type-trace{background:var(--teal-soft);border-color:var(--teal-line);color:var(--teal);}
+.pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 4px 0;}
+.pagination-info{color:var(--text-3);font-size:12px;}
+.pagination-actions{display:flex;align-items:center;gap:8px;}
+.page-chip{min-width:32px;height:30px;border:1px solid var(--border-strong);border-radius:8px;background:#fff;display:inline-flex;align-items:center;justify-content:center;padding:0 10px;cursor:pointer;box-shadow:var(--shadow-sm);}
+.page-chip.active{background:var(--brand-soft);border-color:var(--brand-line);color:var(--brand-strong);font-weight:600;}
+.page-chip:disabled{opacity:.45;cursor:not-allowed;}
+.summary-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;margin-bottom:14px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-sm);}
+.summary-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:var(--bg-subtle);border:1px solid var(--border);}
+.summary-label{color:var(--text-3);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+.summary-value{color:var(--text-1);font-weight:600;}
+.drawer-layout{position:relative;display:flex;min-height:0;flex:1;}
+.drawer-main{flex:1;min-width:0;transition:padding-right .18s ease;}
+.drawer-main.with-drawer{padding-right:376px;}
+.side-drawer{position:absolute;top:0;right:0;bottom:0;width:360px;background:#fff;border-left:1px solid var(--border);box-shadow:-16px 0 32px rgba(15,23,42,.08);display:none;flex-direction:column;}
+.side-drawer.open{display:flex;}
+.drawer-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.drawer-title{min-width:0;flex:1;display:flex;align-items:center;gap:10px;}
+.drawer-title-text{min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.drawer-nav{display:flex;align-items:center;gap:6px;}
+.drawer-body{padding:16px;overflow:auto;display:flex;flex-direction:column;gap:14px;}
+.field-group{padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:10px;}
+.field-group:last-child{border-bottom:none;padding-bottom:0;}
+.field-row{display:flex;flex-direction:column;gap:4px;}
+.field-label{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);}
+.field-value{color:var(--text-1);word-break:break-word;}
+.field-box{max-height:76px;overflow:auto;padding:10px 11px;background:var(--bg-subtle);border:1px solid var(--border);border-radius:10px;white-space:pre-wrap;word-break:break-word;}
+.menu{position:relative;}
+.dropdown{position:absolute;right:0;top:calc(100% + 8px);width:180px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-md);padding:6px;display:none;z-index:30;}
+.dropdown.open{display:block;}
+.dropdown-item{padding:10px 12px;border-radius:8px;cursor:pointer;color:var(--text-1);}
+.dropdown-item:hover{background:var(--bg-hover);}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.24);display:none;align-items:center;justify-content:center;z-index:40;backdrop-filter:blur(4px);}
+.overlay.open{display:flex;}
+.modal{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-md);display:flex;flex-direction:column;overflow:hidden;}
+.modal-header{padding:16px 18px;border-bottom:1px solid var(--border);background:#fcfdff;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.modal-title{font-size:16px;font-weight:700;}
+.modal-subtitle{font-size:12px;color:var(--text-3);margin-top:3px;}
+.modal-body{padding:18px;overflow:auto;display:flex;flex-direction:column;gap:16px;}
+.modal-footer{padding:14px 18px;border-top:1px solid var(--border);background:#fcfdff;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.footer-meta{color:var(--text-3);font-size:12px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-col{display:flex;flex-direction:column;gap:14px;}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0;}
+.label{font-size:12px;font-weight:600;color:var(--text-1);}
+.req::after{content:' *';color:var(--red);}
+.input,.select,.textarea{width:100%;border:1px solid var(--border-strong);border-radius:10px;background:#fff;padding:0 12px;color:var(--text-1);outline:none;transition:.15s;box-shadow:var(--shadow-sm);}
+.input,.select{height:38px;}
+.textarea{min-height:96px;max-height:160px;padding:10px 12px;resize:vertical;line-height:1.6;}
+.textarea.fixed{height:120px;resize:none;}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--brand-line);box-shadow:0 0 0 3px rgba(59,130,246,.08);}
+.helper{font-size:12px;color:var(--text-3);}
+.import-card{border:1px dashed var(--border-strong);background:var(--bg-subtle);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.import-drop{height:88px;border:1px dashed var(--border-strong);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;cursor:pointer;color:var(--text-2);}
+.import-drop:hover{border-color:var(--brand-line);color:var(--brand-strong);background:var(--brand-soft);}
+.import-state{display:none;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--border);}
+.import-state.show{display:flex;}
+.import-meta{display:flex;align-items:center;gap:8px;min-width:0;}
+.import-file{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}
+.import-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;}
+.tabs{display:flex;gap:6px;padding:6px;border-radius:12px;background:var(--bg-soft);border:1px solid var(--border);}
+.tab{flex:1;height:34px;border:none;background:transparent;border-radius:8px;color:var(--text-2);cursor:pointer;font-weight:600;}
+.tab.active{background:#fff;color:var(--brand-strong);box-shadow:var(--shadow-sm);}
+.tab-panel{display:none;min-height:0;}
+.tab-panel.active{display:block;}
+.trace-tab-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:14px;min-height:242px;}
+.panel{border:1px solid var(--border);border-radius:12px;background:#fff;display:flex;flex-direction:column;min-height:0;}
+.panel-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fcfdff;}
+.panel-title{font-weight:700;}
+.panel-body{padding:14px;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:auto;}
+.panel-stat{font-size:12px;color:var(--text-3);}
+.mini-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.mini-table th,.mini-table td{padding:10px 10px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
+.mini-table th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);background:#fbfcff;position:sticky;top:0;}
+.mini-table td{font-size:12px;color:var(--text-2);}
+.mini-table tbody tr:hover td{background:var(--bg-hover);}
+.mini-table tbody tr:last-child td{border-bottom:none;}
+.mini-scroll{overflow:auto;min-height:0;flex:1;}
+.checkbox{width:14px;height:14px;accent-color:var(--brand);cursor:pointer;}
+.selection-box{height:120px;overflow:auto;border:1px solid var(--border);border-radius:12px;background:#fff;display:flex;flex-direction:column;}
+.selection-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) 24px;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);}
+.selection-row:last-child{border-bottom:none;}
+.selection-empty{padding:24px 12px;text-align:center;color:var(--text-3);}
+.inline-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.hidden{display:none !important;}
+@media (max-width: 1320px){
+  .trace-tab-layout{grid-template-columns:1fr;}
+  .drawer-main.with-drawer{padding-right:0;}
+  .side-drawer{width:340px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="logo-icon">C4</div>
+      <div><div class="logo-text">Chat4Data</div><div class="logo-sub">Prompt Studio</div></div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">工程</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>提示词管理</div>
+      <div class="nav-item active"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>数据集</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>评估记录</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">观测</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Trace</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>统计</div>
+    </div>
+    <div class="sb-bottom">
+      <div class="user-row"><div class="avatar">C</div><span style="font-size:12px;color:var(--text-2);font-weight:500;">chat4data-dev</span></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="screen active" id="screen-list">
+      <div class="topbar"><span class="page-title">数据集</span></div>
+      <div class="page-scroll">
+        <div class="page-head"><h1>数据集</h1></div>
+        <div class="toolbar">
+          <div class="search-bar">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="dataset-search" type="text" placeholder="搜索数据集名称" />
+          </div>
+          <div class="menu">
+            <button class="btn btn-primary" id="create-trigger">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              新增数据集
+            </button>
+            <div class="dropdown" id="create-menu">
+              <div class="dropdown-item" data-create="session">按 session 创建</div>
+              <div class="dropdown-item" data-create="case">按 case 创建</div>
+              <div class="dropdown-item" data-create="trace">按 trace 创建</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card table-shell">
+          <table class="table" id="dataset-table">
+            <thead>
+              <tr>
+                <th style="width:96px;">ID</th>
+                <th style="width:220px;">数据集名称</th>
+                <th style="width:110px;">环境</th>
+                <th style="width:120px;">创建类型</th>
+                <th style="width:120px;">总数 (S/T)</th>
+                <th style="width:320px;">描述</th>
+                <th style="width:180px;">创建时间</th>
+                <th class="sticky-right" style="width:92px;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="dataset-tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <div class="pagination-info" id="dataset-pagination-info"></div>
+          <div class="pagination-actions" id="dataset-pagination"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-detail">
+      <div class="topbar">
+        <div class="breadcrumb">
+          <span class="bc-link" id="back-to-list"><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;"><polyline points="15 18 9 12 15 6"/></svg>数据集</span>
+          <span class="bc-sep">/</span>
+          <span class="bc-current" id="detail-breadcrumb-name">dataset_name</span>
+        </div>
+      </div>
+      <div class="page-scroll drawer-layout">
+        <div class="drawer-main" id="detail-main">
+          <div class="summary-bar" id="detail-summary"></div>
+          <div class="toolbar">
+            <div class="search-bar wide">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input id="trace-search" type="text" placeholder="搜索 session id / trace id" />
+            </div>
+          </div>
+          <div class="card table-shell">
+            <table class="table" style="min-width:1180px;">
+              <thead>
+                <tr>
+                  <th style="width:88px;">ID</th>
+                  <th style="width:210px;">session id</th>
+                  <th style="width:220px;">trace id</th>
+                  <th style="width:280px;">用户输入</th>
+                  <th style="width:280px;">模型输出</th>
+                  <th style="width:180px;">创建时间</th>
+                </tr>
+              </thead>
+              <tbody id="trace-tbody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="pagination-info" id="trace-pagination-info"></div>
+            <div class="pagination-actions" id="trace-pagination"></div>
+          </div>
+        </div>
+
+        <aside class="side-drawer" id="trace-drawer">
+          <div class="drawer-head">
+            <div class="drawer-title"><div class="drawer-title-text" id="drawer-trace-title"></div></div>
+            <div class="drawer-nav">
+              <button class="btn btn-sm btn-icon" id="drawer-prev" title="上一条"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <button class="btn btn-sm btn-icon" id="drawer-next" title="下一条"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+              <button class="btn btn-sm btn-icon" id="drawer-close" title="关闭"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+          </div>
+          <div class="drawer-body" id="drawer-body"></div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-basic-overlay">
+  <div class="modal" style="width:720px;height:620px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="basic-modal-title">按 session 创建</div>
+        <div class="modal-subtitle" id="basic-modal-subtitle">支持手动批量输入或从文件导入 ID。</div>
+      </div>
+      <button class="btn btn-sm btn-icon" data-close="modal-basic-overlay"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label class="label req" id="basic-name-label">数据集名称</label>
+          <input class="input" id="basic-name" type="text" placeholder="请输入数据集名称" />
+        </div>
+        <div class="field">
+          <label class="label req">Langfuse 环境</label>
+          <select class="select" id="basic-env">
+            <option value="prod">线上环境</option>
+            <option value="uat">UAT 环境</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label req" id="basic-id-label">Session ID / Case ID</label>
+        <textarea class="textarea fixed" id="basic-ids" placeholder="支持换行或逗号分隔"></textarea>
+        <div class="helper" id="basic-id-helper">支持手动批量输入，实时按换行或逗号拆分。</div>
+      </div>
+      <div class="import-card">
+        <div class="field" style="gap:10px;">
+          <label class="label">从文件导入 (.xlsx / .csv)</label>
+          <div class="import-drop" id="basic-upload-trigger">点击上传文件，模拟导入 sheet / 字段列</div>
+          <div class="import-state" id="basic-import-state">
+            <div class="import-meta">
+              <span class="tag tag-type-trace">已上传</span>
+              <span class="import-file" id="basic-import-file">session_ids.xlsx</span>
+            </div>
+            <button class="btn btn-sm btn-icon" id="basic-import-reset"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+        </div>
+        <div class="import-grid hidden" id="basic-import-controls">
+          <div class="field">
+            <label class="label">Sheet</label>
+            <select class="select" id="basic-sheet"></select>
+          </div>
+          <div class="field">
+            <label class="label">字段列</label>
+            <select class="select" id="basic-column"></select>
+          </div>
+          <button class="btn" id="basic-sync">同步到输入框</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">描述</label>
+        <textarea class="textarea" id="basic-desc" placeholder="请输入数据集描述（选填）"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="footer-meta" id="basic-footer-meta">已识别 0 条</div>
+      <div class="inline-actions">
+        <button class="btn" data-close="modal-basic-overlay">取消</button>
+        <button class="btn btn-primary" id="basic-submit">创建数据集</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-trace-overlay">
+  <div class="modal" style="width:700px;height:520px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">按 trace 创建</div>
+        <div class="modal-subtitle">三种创建方式互斥，同一时间只选中当前 tab 的内容。</div>
+      </div>
+      <button class="btn btn-sm btn-icon" data-close="modal-trace-overlay"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" style="padding-bottom:10px;">
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="field">
+          <label class="label req">数据集名称</label>
+          <input class="input" id="trace-name" type="text" placeholder="请输入数据集名称" />
+        </div>
+        <div class="field">
+          <label class="label req">Langfuse 环境</label>
+          <select class="select" id="trace-env">
+            <option value="prod">线上环境</option>
+            <option value="uat">UAT 环境</option>
+          </select>
+        </div>
+      </div>
+      <div class="tabs" id="trace-tabs">
+        <button class="tab active" data-tab="json">粘贴 JSON</button>
+        <button class="tab" data-tab="id">按 trace id 导入</button>
+        <button class="tab" data-tab="session">按 session 查 trace</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-json">
+        <div class="field">
+          <textarea class="textarea" id="trace-json" style="height:214px;resize:none;" placeholder='支持单个对象或数组，例如 [{"trace_id":"tr_001"}]'></textarea>
+          <div class="helper">系统自动解析 trace id、用户输入、模型输出字段。</div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-id">
+        <div class="field">
+          <label class="label req">Trace ID</label>
+          <textarea class="textarea fixed" id="trace-ids" placeholder="支持换行或逗号分隔"></textarea>
+          <div class="helper" id="trace-id-count">已识别 0 条</div>
+        </div>
+        <div class="import-card">
+          <div class="import-drop" id="trace-upload-trigger">点击上传文件，模拟导入 trace id</div>
+          <div class="import-state" id="trace-import-state">
+            <div class="import-meta">
+              <span class="tag tag-type-trace">已上传</span>
+              <span class="import-file" id="trace-import-file">trace_ids.csv</span>
+            </div>
+            <button class="btn btn-sm btn-icon" id="trace-import-reset"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+          <div class="import-grid hidden" id="trace-import-controls">
+            <div class="field">
+              <label class="label">Sheet</label>
+              <select class="select" id="trace-sheet"></select>
+            </div>
+            <div class="field">
+              <label class="label">字段列</label>
+              <select class="select" id="trace-column"></select>
+            </div>
+            <button class="btn" id="trace-sync">同步到输入框</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-session">
+        <div class="trace-tab-layout">
+          <div class="panel">
+            <div class="panel-body">
+              <div class="field">
+                <label class="label req">Session ID</label>
+                <textarea class="textarea fixed" id="trace-session-ids" placeholder="支持换行或逗号分隔"></textarea>
+              </div>
+              <button class="btn btn-primary" id="session-query-btn">查询 session 下的 trace</button>
+              <div class="panel-stat" id="session-query-stat">查询 session 0 个 / 共 trace 0 条</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;min-width:0;">
+            <div class="panel" style="flex:1;min-height:0;">
+              <div class="panel-head">
+                <div class="panel-title" id="preview-title">TRACE 预览 | 0 条 / 0 已选</div>
+                <button class="btn btn-sm" id="preview-toggle-all" disabled>全选</button>
+              </div>
+              <div class="mini-scroll">
+                <table class="mini-table">
+                  <thead>
+                    <tr>
+                      <th style="width:42px;"></th>
+                      <th style="width:160px;">trace id</th>
+                      <th>用户输入</th>
+                      <th style="width:150px;">创建时间</th>
+                    </tr>
+                  </thead>
+                  <tbody id="preview-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="selection-box">
+              <div class="panel-head" style="padding:10px 12px;">
+                <div class="panel-title" id="selected-title">已选 trace 0 条</div>
+                <button class="btn btn-sm hidden" id="selected-clear">清空</button>
+              </div>
+              <div id="selected-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="footer-meta" id="trace-footer-meta">已选 0 条 trace</div>
+      <div class="inline-actions">
+        <button class="btn" data-close="modal-trace-overlay">取消</button>
+        <button class="btn btn-primary" id="trace-submit">创建数据集</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const datasets = [
+  {
+    id:'ds_10892',name:'prod_order_trace_0518',env:'prod',type:'trace',session_count:0,trace_count:33,
+    desc:'线上订单回溯数据，覆盖支付前后的关键问答链路。',created_at:'2026-05-20 14:23',
+    traces:buildTraceRows('sess-prod-','trace-prod-',12,'订单状态查询','已为您定位到支付异常原因。')
+  },
+  {
+    id:'ds_10831',name:'uat_shipping_session_set',env:'uat',type:'session',session_count:10,trace_count:33,
+    desc:'UAT 环境发货咨询多轮 session 样本，用于评估数据同步与兜底回复。',created_at:'2026-05-19 11:08',
+    traces:buildTraceRows('sess-uat-','trace-uat-',15,'请帮我查一下物流状态','物流信息已同步到最新节点。')
+  },
+  {
+    id:'ds_10764',name:'case_refund_hotfix',env:'prod',type:'case',session_count:18,trace_count:52,
+    desc:'退款咨询 case 集合，覆盖金额核对、到账时效、补充资料等场景。',created_at:'2026-05-17 19:42',
+    traces:buildTraceRows('sess-case-','trace-case-',14,'退款多久到账','退款将在 1-3 个工作日内原路退回。')
+  },
+  {
+    id:'ds_10688',name:'prod_vip_trace_group',env:'prod',type:'trace',session_count:0,trace_count:24,
+    desc:'会员权益问答 trace，主要用于观测升级后的话术稳定性。',created_at:'2026-05-15 10:15',
+    traces:buildTraceRows('sess-vip-','trace-vip-',11,'会员有什么权益','当前会员支持专属折扣与极速服务。')
+  },
+  {
+    id:'ds_10614',name:'uat_onboarding_case_pack',env:'uat',type:'case',session_count:22,trace_count:61,
+    desc:'新手引导 case 数据集，验证功能说明、操作步骤与异常引导文案。',created_at:'2026-05-11 16:05',
+    traces:buildTraceRows('sess-new-','trace-new-',16,'怎么开始使用','建议先完成账号绑定，再进入任务面板。')
+  }
+];
+let currentDatasetPage = 1;
+const datasetPageSize = 20;
+let currentDatasetId = datasets[0].id;
+let currentTracePage = 1;
+const tracePageSize = 10;
+let selectedTraceIndex = -1;
+const createState = {
+  basicType:'session',
+  basicImport:{sheet:'Sheet1',column:'session_id'},
+  traceImport:{sheet:'Sheet1',column:'trace_id'},
+  activeTraceTab:'json',
+  sessionPreview:[],
+  selectedTraceIds:new Set()
+};
+const importSheets = {
+  Sheet1:['session_id','trace_id','case_id'],
+  SessionMap:['session_code','trace_ref'],
+  TracePool:['trace_id','input']
+};
+const sessionQueryMock = [
+  {trace_id:'tr_9f23d2a187c1',input:'查询昨天的退款进度',created_at:'2026-05-20 10:12',session_id:'sess-ref-1001',output:'退款进度已进入银行处理中。',metadata:{source:'langfuse',label:'refund'}},
+  {trace_id:'tr_9f23d2a187c2',input:'为什么订单被关闭',created_at:'2026-05-20 10:14',session_id:'sess-ref-1001',output:'订单在支付超时后已自动关闭。',metadata:{source:'langfuse',label:'order'}},
+  {trace_id:'tr_9f23d2a187c3',input:'帮我看下物流停在哪了',created_at:'2026-05-20 10:16',session_id:'sess-ref-1002',output:'物流在分拨中心等待转运。',metadata:{source:'langfuse',label:'shipping'}},
+  {trace_id:'tr_9f23d2a187c4',input:'会员折扣什么时候生效',created_at:'2026-05-20 10:19',session_id:'sess-ref-1002',output:'升级后立即生效，可在支付页查看。',metadata:{source:'langfuse',label:'vip'}},
+  {trace_id:'tr_9f23d2a187c5',input:'想修改开票信息',created_at:'2026-05-20 10:22',session_id:'sess-ref-1003',output:'请先提交新的税号与抬头信息。',metadata:{source:'langfuse',label:'invoice'}}
+];
+
+function buildTraceRows(sessionPrefix,tracePrefix,count,inputSeed,outputSeed){
+  return Array.from({length:count},(_,i)=>({
+    id:String(i+1),
+    session_id:`${sessionPrefix}${String(1200+i).padStart(4,'0')}`,
+    trace_id:`${tracePrefix}${String(5400+i).padStart(4,'0')}`,
+    input:`${inputSeed} #${i+1}`,
+    output:`${outputSeed} #${i+1}`,
+    metadata:{channel:i % 2 ? 'web':'bot',priority:i % 3 ? 'normal':'high'},
+    created_at:`2026-05-${String(10 + (i % 11)).padStart(2,'0')} ${String(9 + (i % 8)).padStart(2,'0')}:${String(12 + i).padStart(2,'0')}`
+  }));
+}
+function envLabel(env){ return env === 'prod' ? '线上' : 'UAT'; }
+function envClass(env){ return env === 'prod' ? 'tag-env-prod' : 'tag-env-uat'; }
+function typeClass(type){ return ({session:'tag-type-session',case:'tag-type-case',trace:'tag-type-trace'})[type]; }
+function typeLabel(type){ return ({session:'session',case:'case',trace:'trace'})[type]; }
+function countLabel(ds){ return ds.type === 'trace' ? `— / ${ds.trace_count}` : `${ds.session_count} / ${ds.trace_count}`; }
+function escapeHtml(v){ return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function parseBulkInput(value){ return value.split(/[\n,]/).map(v=>v.trim()).filter(Boolean); }
+function datasetFiltered(){
+  const keyword = document.getElementById('dataset-search').value.trim().toLowerCase();
+  if(!keyword) return datasets;
+  return datasets.filter(ds => ds.name.toLowerCase().includes(keyword));
+}
+function renderDatasetTable(){
+  const rows = datasetFiltered();
+  const total = rows.length;
+  const totalPages = Math.max(1, Math.ceil(total / datasetPageSize));
+  if(currentDatasetPage > totalPages) currentDatasetPage = totalPages;
+  const start = (currentDatasetPage - 1) * datasetPageSize;
+  const pageRows = rows.slice(start, start + datasetPageSize);
+  const tbody = document.getElementById('dataset-tbody');
+  tbody.innerHTML = pageRows.length ? pageRows.map(ds => `
+    <tr>
+      <td class="mono" title="${ds.id}">${ds.id}</td>
+      <td><span class="link td-ellipsis" title="${escapeHtml(ds.name)}" onclick="openDatasetDetail('${ds.id}')">${escapeHtml(ds.name)}</span></td>
+      <td><span class="tag ${envClass(ds.env)}">${envLabel(ds.env)}</span></td>
+      <td><span class="tag ${typeClass(ds.type)}">${typeLabel(ds.type)}</span></td>
+      <td class="td-nowrap" title="${countLabel(ds)}">${countLabel(ds)}</td>
+      <td class="td-ellipsis wide" title="${escapeHtml(ds.desc || '—')}">${escapeHtml(ds.desc || '—')}</td>
+      <td class="td-nowrap" title="${ds.created_at}">${ds.created_at}</td>
+      <td class="sticky-right"><span class="link" onclick="openDatasetDetail('${ds.id}')">详情</span></td>
+    </tr>
+  `).join('') : `<tr><td colspan="8" style="text-align:center;color:var(--text-3);padding:28px 14px;">暂无匹配数据集</td></tr>`;
+  const end = Math.min(start + pageRows.length, total);
+  document.getElementById('dataset-pagination-info').textContent = `共 ${total} 条${total ? `，当前显示 ${start + 1}-${end} 条` : ''}`;
+  const pager = document.getElementById('dataset-pagination');
+  pager.innerHTML = `
+    <button class="page-chip" ${currentDatasetPage === 1 ? 'disabled' : ''} onclick="changeDatasetPage(${currentDatasetPage - 1})">上一页</button>
+    ${Array.from({length: totalPages}, (_,i) => `<button class="page-chip ${i + 1 === currentDatasetPage ? 'active' : ''}" onclick="changeDatasetPage(${i+1})">${i+1}</button>`).join('')}
+    <button class="page-chip" ${currentDatasetPage === totalPages ? 'disabled' : ''} onclick="changeDatasetPage(${currentDatasetPage + 1})">下一页</button>
+  `;
+}
+function changeDatasetPage(page){ currentDatasetPage = page; renderDatasetTable(); }
+function openDatasetDetail(id){
+  currentDatasetId = id;
+  currentTracePage = 1;
+  selectedTraceIndex = -1;
+  document.getElementById('screen-list').classList.remove('active');
+  document.getElementById('screen-detail').classList.add('active');
+  closeTraceDrawer();
+  renderDatasetDetail();
+}
+function backToList(){
+  document.getElementById('screen-detail').classList.remove('active');
+  document.getElementById('screen-list').classList.add('active');
+}
+function currentDataset(){ return datasets.find(ds => ds.id === currentDatasetId) || datasets[0]; }
+function filteredTraces(){
+  const ds = currentDataset();
+  const keyword = document.getElementById('trace-search').value.trim().toLowerCase();
+  if(!keyword) return ds.traces;
+  return ds.traces.filter(row => row.session_id.toLowerCase().includes(keyword) || row.trace_id.toLowerCase().includes(keyword));
+}
+function renderDatasetDetail(){
+  const ds = currentDataset();
+  document.getElementById('detail-breadcrumb-name').textContent = ds.name;
+  document.getElementById('detail-summary').innerHTML = `
+    <div class="summary-chip"><span class="summary-label">Session</span><span class="summary-value">${ds.session_count}</span></div>
+    <div class="summary-chip"><span class="summary-label">Trace</span><span class="summary-value">${ds.trace_count}</span></div>
+    <div class="summary-chip"><span class="summary-label">环境</span><span class="summary-value">${envLabel(ds.env)}</span></div>
+    <div class="summary-chip"><span class="summary-label">类型</span><span class="summary-value">${typeLabel(ds.type)}</span></div>
+  `;
+  renderTraceTable();
+}
+function renderTraceTable(){
+  const rows = filteredTraces();
+  const total = rows.length;
+  const totalPages = Math.max(1, Math.ceil(total / tracePageSize));
+  if(currentTracePage > totalPages) currentTracePage = totalPages;
+  const start = (currentTracePage - 1) * tracePageSize;
+  const pageRows = rows.slice(start, start + tracePageSize);
+  const tbody = document.getElementById('trace-tbody');
+  tbody.innerHTML = pageRows.length ? pageRows.map((row,index) => {
+    const globalIndex = start + index;
+    const selected = selectedTraceIndex === globalIndex ? 'selected' : '';
+    return `
+      <tr class="${selected}" onclick="openTraceDrawer(${globalIndex})">
+        <td title="${row.id}">${row.id}</td>
+        <td class="mono td-ellipsis" title="${escapeHtml(row.session_id)}">${escapeHtml(row.session_id)}</td>
+        <td class="mono td-ellipsis" title="${escapeHtml(row.trace_id)}">${escapeHtml(row.trace_id)}</td>
+        <td class="td-ellipsis wide" title="${escapeHtml(row.input)}">${escapeHtml(row.input)}</td>
+        <td class="td-ellipsis wide" title="${escapeHtml(row.output)}">${escapeHtml(row.output)}</td>
+        <td title="${row.created_at}">${row.created_at}</td>
+      </tr>`;
+  }).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:28px 14px;">暂无匹配 trace</td></tr>`;
+  const end = Math.min(start + pageRows.length, total);
+  document.getElementById('trace-pagination-info').textContent = `共 ${total} 条${total ? `，当前显示 ${start + 1}-${end} 条` : ''}`;
+  document.getElementById('trace-pagination').innerHTML = `
+    <button class="page-chip" ${currentTracePage === 1 ? 'disabled' : ''} onclick="changeTracePage(${currentTracePage - 1})">上一页</button>
+    ${Array.from({length: totalPages}, (_,i) => `<button class="page-chip ${i + 1 === currentTracePage ? 'active' : ''}" onclick="changeTracePage(${i + 1})">${i + 1}</button>`).join('')}
+    <button class="page-chip" ${currentTracePage === totalPages ? 'disabled' : ''} onclick="changeTracePage(${currentTracePage + 1})">下一页</button>
+  `;
+  if(selectedTraceIndex >= rows.length){ closeTraceDrawer(); }
+}
+function changeTracePage(page){ currentTracePage = page; renderTraceTable(); }
+function openTraceDrawer(index){
+  const rows = filteredTraces();
+  if(!rows[index]) return;
+  selectedTraceIndex = index;
+  const row = rows[index];
+  document.getElementById('detail-main').classList.add('with-drawer');
+  document.getElementById('trace-drawer').classList.add('open');
+  document.getElementById('drawer-trace-title').textContent = row.trace_id;
+  document.getElementById('drawer-body').innerHTML = `
+    <div class="field-group">
+      <div class="field-row"><div class="field-label">id</div><div class="field-value">${escapeHtml(row.id)}</div></div>
+      <div class="field-row"><div class="field-label">session id</div><div class="field-value mono">${escapeHtml(row.session_id)}</div></div>
+      <div class="field-row"><div class="field-label">trace id</div><div class="field-value mono">${escapeHtml(row.trace_id)}</div></div>
+    </div>
+    <div class="field-group">
+      <div class="field-row"><div class="field-label">用户输入</div><div class="field-box">${escapeHtml(row.input)}</div></div>
+      <div class="field-row"><div class="field-label">模型输出</div><div class="field-box mono">${escapeHtml(row.output)}</div></div>
+      <div class="field-row"><div class="field-label">Metadata</div><div class="field-box mono">${escapeHtml(JSON.stringify(row.metadata, null, 2))}</div></div>
+    </div>
+    <div class="field-group">
+      <div class="field-row"><div class="field-label">创建时间</div><div class="field-value">${row.created_at}</div></div>
+    </div>`;
+  document.getElementById('drawer-prev').disabled = index <= 0;
+  document.getElementById('drawer-next').disabled = index >= rows.length - 1;
+  renderTraceTable();
+}
+function closeTraceDrawer(){
+  selectedTraceIndex = -1;
+  document.getElementById('detail-main').classList.remove('with-drawer');
+  document.getElementById('trace-drawer').classList.remove('open');
+  renderTraceTable();
+}
+function moveDrawer(offset){
+  const next = selectedTraceIndex + offset;
+  const rows = filteredTraces();
+  if(next < 0 || next >= rows.length) return;
+  openTraceDrawer(next);
+}
+function toggleCreateMenu(force){
+  const menu = document.getElementById('create-menu');
+  menu.classList.toggle('open', force ?? !menu.classList.contains('open'));
+}
+function openOverlay(id){ document.getElementById(id).classList.add('open'); }
+function closeOverlay(id){ document.getElementById(id).classList.remove('open'); }
+function resetBasicModal(type){
+  createState.basicType = type;
+  const isSession = type === 'session';
+  document.getElementById('basic-modal-title').textContent = `按 ${type} 创建`;
+  document.getElementById('basic-modal-subtitle').textContent = `支持手动批量输入或从文件导入 ${isSession ? 'session id' : 'case id'}。`;
+  document.getElementById('basic-id-label').textContent = isSession ? 'Session ID' : 'Case ID';
+  document.getElementById('basic-name').value = '';
+  document.getElementById('basic-env').value = 'prod';
+  document.getElementById('basic-ids').value = '';
+  document.getElementById('basic-desc').value = '';
+  resetImportCard('basic');
+  syncBasicFooter();
+}
+function syncBasicFooter(){
+  const count = parseBulkInput(document.getElementById('basic-ids').value).length;
+  document.getElementById('basic-footer-meta').textContent = `已识别 ${count} 条`;
+}
+function resetImportCard(prefix){
+  document.getElementById(`${prefix}-import-state`).classList.remove('show');
+  document.getElementById(`${prefix}-import-controls`).classList.add('hidden');
+}
+function openBasicImport(){
+  document.getElementById('basic-import-state').classList.add('show');
+  document.getElementById('basic-import-controls').classList.remove('hidden');
+  populateImportSelect('basic-sheet', Object.keys(importSheets));
+  syncImportColumns('basic-sheet','basic-column');
+}
+function openTraceImport(){
+  document.getElementById('trace-import-state').classList.add('show');
+  document.getElementById('trace-import-controls').classList.remove('hidden');
+  populateImportSelect('trace-sheet', Object.keys(importSheets));
+  syncImportColumns('trace-sheet','trace-column');
+}
+function populateImportSelect(id, options){
+  const select = document.getElementById(id);
+  select.innerHTML = options.map(v => `<option value="${v}">${v}</option>`).join('');
+}
+function syncImportColumns(sheetId, columnId){
+  const sheet = document.getElementById(sheetId).value;
+  const columns = importSheets[sheet] || [];
+  populateImportSelect(columnId, columns);
+}
+function syncBasicImportToInput(){
+  const column = document.getElementById('basic-column').value;
+  const values = column.includes('case') ? ['case_001','case_002','case_003'] : ['sess_1001','sess_1002','sess_1003'];
+  document.getElementById('basic-ids').value = values.join('\n');
+  syncBasicFooter();
+}
+function syncTraceImportToInput(){
+  document.getElementById('trace-ids').value = ['tr_3001','tr_3002','tr_3003','tr_3004'].join('\n');
+  syncTraceIdCount();
+}
+function submitBasicDataset(){
+  const name = document.getElementById('basic-name').value.trim();
+  const ids = parseBulkInput(document.getElementById('basic-ids').value);
+  if(!name || !ids.length) return alert('请补充数据集名称和 ID。');
+  const env = document.getElementById('basic-env').value;
+  const desc = document.getElementById('basic-desc').value.trim();
+  const type = createState.basicType;
+  const created = {
+    id:`ds_${10800 + datasets.length + Math.floor(Math.random() * 80)}`,
+    name, env, type,
+    session_count: ids.length,
+    trace_count: type === 'case' ? ids.length * 3 : ids.length * 2,
+    desc: desc || `${type} 批量导入，共 ${ids.length} 条。`,
+    created_at:'2026-05-21 12:08',
+    traces:buildTraceRows(`${type}-sess-`,`${type}-trace-`,Math.max(ids.length * 2, 8),`${type} 输入样本`,`模型输出样本`)
+  };
+  datasets.unshift(created);
+  currentDatasetPage = 1;
+  closeOverlay('modal-basic-overlay');
+  renderDatasetTable();
+}
+function resetTraceModal(){
+  document.getElementById('trace-name').value = '';
+  document.getElementById('trace-env').value = 'prod';
+  document.getElementById('trace-json').value = '';
+  document.getElementById('trace-ids').value = '';
+  document.getElementById('trace-session-ids').value = '';
+  createState.activeTraceTab = 'json';
+  createState.sessionPreview = [];
+  createState.selectedTraceIds = new Set();
+  document.querySelectorAll('#trace-tabs .tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === 'json'));
+  document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+  document.getElementById('tab-json').classList.add('active');
+  resetImportCard('trace');
+  syncTraceIdCount();
+  renderSessionPreview();
+  syncTraceFooter();
+}
+function syncTraceIdCount(){
+  const count = parseBulkInput(document.getElementById('trace-ids').value).length;
+  document.getElementById('trace-id-count').textContent = `已识别 ${count} 条`;
+}
+function querySessionTraces(){
+  const sessionIds = parseBulkInput(document.getElementById('trace-session-ids').value);
+  if(!sessionIds.length) return alert('请先输入 session ID。');
+  createState.sessionPreview = sessionQueryMock.map((row, idx) => ({...row, session_id: sessionIds[idx % sessionIds.length]}));
+  createState.selectedTraceIds = new Set();
+  document.getElementById('session-query-stat').textContent = `查询 session ${sessionIds.length} 个 / 共 trace ${createState.sessionPreview.length} 条`;
+  renderSessionPreview();
+}
+function renderSessionPreview(){
+  const rows = createState.sessionPreview;
+  const tbody = document.getElementById('preview-tbody');
+  tbody.innerHTML = rows.length ? rows.map(row => {
+    const checked = createState.selectedTraceIds.has(row.trace_id) ? 'checked' : '';
+    return `
+      <tr>
+        <td><input class="checkbox" type="checkbox" ${checked} onchange="togglePreviewSelection('${row.trace_id}')" /></td>
+        <td class="mono td-ellipsis" title="${escapeHtml(row.trace_id)}">${escapeHtml(row.trace_id)}</td>
+        <td class="td-ellipsis" title="${escapeHtml(row.input)}">${escapeHtml(row.input)}</td>
+        <td title="${row.created_at}">${row.created_at}</td>
+      </tr>`;
+  }).join('') : `<tr><td colspan="4" style="text-align:center;color:var(--text-3);padding:24px 10px;">查询后在这里预览 trace</td></tr>`;
+  const selectedRows = rows.filter(row => createState.selectedTraceIds.has(row.trace_id));
+  document.getElementById('preview-title').textContent = `TRACE 预览 | ${rows.length} 条 / ${selectedRows.length} 已选`;
+  const toggleAllBtn = document.getElementById('preview-toggle-all');
+  toggleAllBtn.disabled = !rows.length;
+  toggleAllBtn.textContent = rows.length && selectedRows.length === rows.length ? '取消全选' : '全选';
+  const selectedList = document.getElementById('selected-list');
+  if(!selectedRows.length){
+    selectedList.innerHTML = '<div class="selection-empty">暂未选择 trace</div>';
+  }else{
+    selectedList.innerHTML = selectedRows.map(row => `
+      <div class="selection-row">
+        <div class="mono td-ellipsis" title="${escapeHtml(row.trace_id)}">${escapeHtml(row.trace_id)}</div>
+        <div class="td-ellipsis" title="${escapeHtml(row.input)}">${escapeHtml(row.input)}</div>
+        <button class="btn btn-sm btn-icon" onclick="removeSelectedTrace('${row.trace_id}')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>`).join('');
+  }
+  const clearBtn = document.getElementById('selected-clear');
+  clearBtn.classList.toggle('hidden', !selectedRows.length);
+  document.getElementById('selected-title').textContent = `已选 trace ${selectedRows.length} 条`;
+  syncTraceFooter();
+}
+function togglePreviewSelection(traceId){
+  if(createState.selectedTraceIds.has(traceId)) createState.selectedTraceIds.delete(traceId);
+  else createState.selectedTraceIds.add(traceId);
+  renderSessionPreview();
+}
+function toggleAllPreview(){
+  const rows = createState.sessionPreview;
+  if(rows.every(row => createState.selectedTraceIds.has(row.trace_id))){
+    createState.selectedTraceIds = new Set();
+  }else{
+    createState.selectedTraceIds = new Set(rows.map(row => row.trace_id));
+  }
+  renderSessionPreview();
+}
+function removeSelectedTrace(traceId){
+  createState.selectedTraceIds.delete(traceId);
+  renderSessionPreview();
+}
+function clearSelectedTraces(){
+  createState.selectedTraceIds = new Set();
+  renderSessionPreview();
+}
+function syncTraceFooter(){
+  let count = 0;
+  if(createState.activeTraceTab === 'json'){
+    const val = document.getElementById('trace-json').value.trim();
+    if(val){
+      try{
+        const parsed = JSON.parse(val);
+        count = Array.isArray(parsed) ? parsed.length : 1;
+      }catch{ count = 0; }
+    }
+  }else if(createState.activeTraceTab === 'id'){
+    count = parseBulkInput(document.getElementById('trace-ids').value).length;
+  }else{
+    count = createState.selectedTraceIds.size;
+  }
+  document.getElementById('trace-footer-meta').textContent = `已选 ${count} 条 trace`;
+}
+function submitTraceDataset(){
+  const name = document.getElementById('trace-name').value.trim();
+  if(!name) return alert('请填写数据集名称。');
+  const env = document.getElementById('trace-env').value;
+  let traceRows = [];
+  if(createState.activeTraceTab === 'json'){
+    const raw = document.getElementById('trace-json').value.trim();
+    if(!raw) return alert('请粘贴 trace JSON。');
+    try{
+      const parsed = JSON.parse(raw);
+      const arr = Array.isArray(parsed) ? parsed : [parsed];
+      traceRows = arr.map((item,idx) => ({
+        id:String(idx + 1),
+        session_id:item.session_id || `sess-json-${idx+1}`,
+        trace_id:item.trace_id || item.id || `tr-json-${idx+1}`,
+        input:item.input || item.user_input || 'JSON 导入用户输入',
+        output:item.output || item.model_output || 'JSON 导入模型输出',
+        metadata:item.metadata || {source:'json'},
+        created_at:item.created_at || '2026-05-21 11:30'
+      }));
+    }catch(err){ return alert('JSON 格式不正确。'); }
+  }else if(createState.activeTraceTab === 'id'){
+    const ids = parseBulkInput(document.getElementById('trace-ids').value);
+    if(!ids.length) return alert('请填写 trace ID。');
+    traceRows = ids.map((id,idx) => ({
+      id:String(idx + 1),session_id:`sess-import-${idx+1}`,trace_id:id,input:`trace id 导入样本 ${idx+1}`,output:`trace id 导入输出 ${idx+1}`,
+      metadata:{source:'trace-id'},created_at:'2026-05-21 11:36'
+    }));
+  }else{
+    if(!createState.selectedTraceIds.size) return alert('请至少选择一条 trace。');
+    traceRows = createState.sessionPreview.filter(row => createState.selectedTraceIds.has(row.trace_id)).map((row,idx) => ({...row,id:String(idx + 1)}));
+  }
+  const created = {
+    id:`ds_${10900 + datasets.length + Math.floor(Math.random() * 60)}`,
+    name,env,type:'trace',session_count:0,trace_count:traceRows.length,
+    desc:`trace 数据集，来源：${createState.activeTraceTab === 'json' ? 'JSON' : createState.activeTraceTab === 'id' ? 'trace id 导入' : 'session 查 trace'}。`,
+    created_at:'2026-05-21 12:16',traces:traceRows
+  };
+  datasets.unshift(created);
+  currentDatasetPage = 1;
+  closeOverlay('modal-trace-overlay');
+  renderDatasetTable();
+}
+
+function init(){
+  renderDatasetTable();
+  renderDatasetDetail();
+  document.getElementById('dataset-search').addEventListener('input', () => { currentDatasetPage = 1; renderDatasetTable(); });
+  document.getElementById('trace-search').addEventListener('input', () => { currentTracePage = 1; renderTraceTable(); });
+  document.getElementById('create-trigger').addEventListener('click', (e) => { e.stopPropagation(); toggleCreateMenu(); });
+  document.querySelectorAll('[data-create]').forEach(item => item.addEventListener('click', () => {
+    const type = item.dataset.create;
+    toggleCreateMenu(false);
+    if(type === 'trace'){
+      resetTraceModal();
+      openOverlay('modal-trace-overlay');
+    }else{
+      resetBasicModal(type);
+      openOverlay('modal-basic-overlay');
+    }
+  }));
+  document.addEventListener('click', (e) => {
+    if(!e.target.closest('.menu')) toggleCreateMenu(false);
+  });
+  document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeOverlay(btn.dataset.close)));
+  document.getElementById('back-to-list').addEventListener('click', backToList);
+  document.getElementById('drawer-close').addEventListener('click', closeTraceDrawer);
+  document.getElementById('drawer-prev').addEventListener('click', () => moveDrawer(-1));
+  document.getElementById('drawer-next').addEventListener('click', () => moveDrawer(1));
+  document.getElementById('basic-ids').addEventListener('input', syncBasicFooter);
+  document.getElementById('basic-upload-trigger').addEventListener('click', openBasicImport);
+  document.getElementById('basic-import-reset').addEventListener('click', () => resetImportCard('basic'));
+  document.getElementById('basic-sheet').addEventListener('change', () => syncImportColumns('basic-sheet','basic-column'));
+  document.getElementById('basic-sync').addEventListener('click', syncBasicImportToInput);
+  document.getElementById('basic-submit').addEventListener('click', submitBasicDataset);
+  document.getElementById('trace-upload-trigger').addEventListener('click', openTraceImport);
+  document.getElementById('trace-import-reset').addEventListener('click', () => resetImportCard('trace'));
+  document.getElementById('trace-sheet').addEventListener('change', () => syncImportColumns('trace-sheet','trace-column'));
+  document.getElementById('trace-sync').addEventListener('click', syncTraceImportToInput);
+  document.getElementById('trace-ids').addEventListener('input', () => { syncTraceIdCount(); syncTraceFooter(); });
+  document.getElementById('trace-json').addEventListener('input', syncTraceFooter);
+  document.getElementById('trace-session-ids').addEventListener('input', syncTraceFooter);
+  document.getElementById('session-query-btn').addEventListener('click', querySessionTraces);
+  document.getElementById('preview-toggle-all').addEventListener('click', toggleAllPreview);
+  document.getElementById('selected-clear').addEventListener('click', clearSelectedTraces);
+  document.getElementById('trace-submit').addEventListener('click', submitTraceDataset);
+  document.querySelectorAll('#trace-tabs .tab').forEach(btn => btn.addEventListener('click', () => {
+    createState.activeTraceTab = btn.dataset.tab;
+    document.querySelectorAll('#trace-tabs .tab').forEach(node => node.classList.toggle('active', node === btn));
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+    syncTraceFooter();
+  }));
+}
+window.changeDatasetPage = changeDatasetPage;
+window.openDatasetDetail = openDatasetDetail;
+window.changeTracePage = changeTracePage;
+window.openTraceDrawer = openTraceDrawer;
+window.togglePreviewSelection = togglePreviewSelection;
+window.removeSelectedTrace = removeSelectedTrace;
+init();
+</script>
+</body>
+</html>

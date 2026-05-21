@@ -1,0 +1,78 @@
+<h2>RAG 产品文档助手：方案选择</h2>
+<p class="subtitle">目标：边界能力划分 + 适度推断 + 必须可追溯引用 + 本地文档</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-body">
+      <h3>A. 最简 Python 版（推荐）</h3>
+      <p>FastAPI + Chroma + LangChain + OpenAI Embedding + GPT</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>教程最多，小白最容易跑通</li>
+            <li>组件清晰，便于后续替换</li>
+            <li>1-2 周可做出可演示版本</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>依赖较多，需要学一点框架概念</li>
+            <li>链路调试需要看日志</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-body">
+      <h3>B. LlamaIndex 一体化版</h3>
+      <p>LlamaIndex + FastAPI + 本地向量库</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>封装更高，开发更快</li>
+            <li>RAG 组件开箱即用</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>黑盒感更强，不利于打基础</li>
+            <li>遇到定制需求时学习成本上升</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-body">
+      <h3>C. 无框架手写版</h3>
+      <p>FastAPI + 手写检索/重排/提示词链路</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>优点</h4>
+          <ul>
+            <li>最透明，理解最深入</li>
+            <li>没有框架锁定</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>缺点</h4>
+          <ul>
+            <li>实现周期更长</li>
+            <li>小白初期更容易卡住</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <p><strong>建议：</strong>先选 A 跑通，再逐步替换模块，既能快速上线，也能学到底层逻辑。</p>
+</div>
